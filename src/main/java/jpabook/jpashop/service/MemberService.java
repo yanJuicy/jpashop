@@ -19,6 +19,7 @@ public class MemberService {
     public Long join(Member member) {
         validateDuplicateMember(member);
         memberRepository.save(member);
+        System.out.println(member.getId());
         return member.getId();
     }
 
