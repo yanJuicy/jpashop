@@ -31,16 +31,25 @@ public class OrderApiController {
     }
 
     @GetMapping("/api/v2/orders")
-    public List<OrderDto> ordersV2() {
+    public List<SimpleOrderDto> ordersV2() {
         List<Order> orders = orderRepository.findAll();
-        List<OrderDto> result = orders.stream()
-                .map(o -> new OrderDto(o))
+        List<SimpleOrderDto> result = orders.stream()
+                .map(o -> new SimpleOrderDto(o))
+                .collect(Collectors.toList());
+        return result;
+    }
+
+    @GetMapping("/api/v3/simple-orders")
+    public List<SimpleOrderDto> ordersV3() {
+        List<Order> orders = orderRepository.findAllWithMemberDelivery();
+        List<SimpleOrderDto> result = orders.stream()
+                .map(o -> new SimpleOrderDto(o))
                 .collect(Collectors.toList());
         return result;
     }
 
     @Data
-    private static class OrderDto {
+    private static class SimpleOrderDto {
         private Long orderId;
         private String name;
         private LocalDateTime orderDate; //주문시간
@@ -48,7 +57,7 @@ public class OrderApiController {
         private Address address;
         private List<OrderItemDto> orderItems;
 
-         public OrderDto(Order order) {
+         public SimpleOrderDto(Order order) {
             orderId = order.getId();
             name = order.getMember().getName();
             orderDate = order.getOrderDate();
